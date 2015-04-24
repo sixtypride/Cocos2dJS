@@ -141,7 +141,7 @@ var GameLayer = cc.Layer.extend({
     initBallSettingCount:0,
     isEnding:false,
     textClip:null,
-    level:2,
+    level:0,
     railInfoList:null,
     terminal:null,
     ctor:function () {
