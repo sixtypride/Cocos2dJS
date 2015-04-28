@@ -2,7 +2,7 @@ var BALL_RADIUS = 20;
 var BALL_MAX = [ 20, 30, 40 ];
 var MATCH_COUNT_ERASE = 3;
 var TYPE_COUNT = 4;
-var SHOOT_SPEED = 10;
+var SHOOT_SPEED = 12;
 var SHOOTING_BALL_POS = [ { x:240, y:160}, { x:240, y:160}, { x:179, y:165 } ]
 
 var that;
@@ -144,6 +144,7 @@ var GameLayer = cc.Layer.extend({
     level:0,
     railInfoList:null,
     terminal:null,
+    debugPanel:null,
     ctor:function () {
         this._super();
 
@@ -155,6 +156,12 @@ var GameLayer = cc.Layer.extend({
         this.showText("레벨" + this.level);
 
         that = this;
+
+        //this.debugPanel = new cc.LabelTTF("END", "Arial Black", 20);
+        //this.debugPanel.enableStroke(cc.color(0, 0, 0, 1), 3.0);
+        //this.addChild(this.debugPanel);
+        //this.debugPanel.x = 50;
+        //this.debugPanel.y = 300;
     },
     showText:function(text) {
         this.textClip = this.createTextClip(text);
@@ -229,14 +236,19 @@ var GameLayer = cc.Layer.extend({
     },
     addMouseEvent:function() {
         cc.eventManager.addListener({
-            event : cc.EventListener.MOUSE,
-            onMouseDown : this.mouseDownHandler
+            event: cc.EventListener.TOUCH_ONE_BY_ONE,
+            swallowTouches: true,
+            onTouchBegan: this.touchBeganHandler,
+            onTouchEnded: this.touchEndedHandler
         }, this);
+
+
     },
     removeMouseEvent:function() {
         cc.eventManager.removeListener({
-            event : cc.EventListener.MOUSE,
-            onMouseDown : this.mouseDownHandler
+            event: cc.EventListener.TOUCH_ONE_BY_ONE,
+            onTouchBegan: this.touchBeganHandler,
+            onTouchEnded: this.touchEndedHandler
         });
     },
     createBG:function() {
@@ -483,14 +495,21 @@ var GameLayer = cc.Layer.extend({
             }
         }
     },
-    mouseDownHandler:function(event) {
-        if(that.isShoot) return;
+    touchBeganHandler:function(touch, event) {
+        //that.debugPanel.string = "BEGAN";
 
-        var downX = event.getLocationX();
-        var downY = event.getLocationY();
+        if(that.isShoot) return true;
+
+        var downX = touch.getLocation().x;
+        var downY = touch.getLocation().y;
 
         that.shootAngle = Math.atan2(downY - that.shootingBall.y, downX - that.shootingBall.x );
         that.isShoot = true;
+
+        return true;
+    },
+    touchEndedHandler:function(touch, event) {
+        //that.debugPanel.string = "END";
     }
 });
 
